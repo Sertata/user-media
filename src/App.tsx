@@ -1,35 +1,38 @@
 import { Button, Container, Paper, Stack, Typography } from '@mui/material'
-import { FC, useRef, useEffect, useState } from 'react'
+import {
+  createTheme,
+  responsiveFontSizes,
+  ThemeProvider,
+} from '@mui/material/styles';
+import { FC, useRef, useEffect } from 'react'
 
 const hasGetUserMedia = () => {
   return !!(navigator?.mediaDevices?.getUserMedia);
 }
-
-
+let theme = createTheme();
+theme = responsiveFontSizes(theme);
 
 export const App: FC = () => {
-  const ref = useRef<HTMLVideoElement | null>(null)
-  const [audio, setAudio] = useState<MediaStreamTrack | null>(null)
+  const videoElRef = useRef<HTMLVideoElement | null>(null)
+  const audioRef = useRef<MediaStreamTrack | null>(null)
 
   const onMute = () => {
-    if (!audio) return;
+    if (!audioRef.current) return;
 
-    audio.enabled = false
+    audioRef.current.enabled = false
   }
   const onUnMute = () => {
-    if (!audio) return;
+    if (!audioRef.current) return;
 
-    audio.enabled = true
+    audioRef.current.enabled = true
   }
-  console.log(audio?.enabled)
   useEffect(() => {
-    if (hasGetUserMedia() && ref.current && ref.current instanceof HTMLVideoElement) {
+    if (hasGetUserMedia() && videoElRef.current && videoElRef.current instanceof HTMLVideoElement) {
 
       navigator.mediaDevices.getUserMedia({ audio: true, video: true })
         .then(stream => {
-          const audioTrack = stream.getAudioTracks()[0]
-          setAudio(audioTrack)
-          ref.current!.srcObject = stream
+          audioRef.current = stream.getAudioTracks()[0]
+          videoElRef.current!.srcObject = stream
         })
         .catch(error => console.error(error))
 
@@ -37,20 +40,22 @@ export const App: FC = () => {
   }, [])
 
   return (
-    <Container maxWidth='md'>
-      <Stack justifyContent='center' alignItems='center'>
-        <Typography color='text.secondary' variant='h1'>Трансляция</Typography>
-      </Stack>
-      <Paper elevation={12}>
-        <Stack>
-          <video ref={ref} autoPlay />
+    <ThemeProvider theme={theme}>
+      <Container maxWidth='md'>
+        <Stack justifyContent='center' alignItems='center'>
+          <Typography color='text.secondary' variant='h3'>Трансляция</Typography>
         </Stack>
-      </Paper>
-      <Stack justifyContent='center' alignItems='center'>
-        <Button onClick={() => onMute()} variant='outlined'>Mute</Button>
-        <Button onClick={() => onUnMute()} variant='outlined'>Unmute</Button>
-      </Stack>
-    </Container>
+        <Paper elevation={12}>
+          <Stack>
+            <video ref={videoElRef} autoPlay />
+          </Stack>
+        </Paper>
+        <Stack justifyContent='center' alignItems='center' direction='row' spacing={2} sx={{ padding: '8px' }}>
+          <Button onClick={() => onMute()} variant='contained'>Mute</Button>
+          <Button onClick={() => onUnMute()} variant='contained'>Unmute</Button>
+        </Stack>
+      </Container>
+    </ThemeProvider>
   )
 }
 
