@@ -68,15 +68,15 @@ export const App: FC = () => {
           <Typography color='text.secondary' variant='h3'>Трансляция</Typography>
         </Stack>
         <Paper elevation={12}>
-          <Stack>
+          <Stack sx={{ position: 'relative' }}>
             <video ref={videoElRef} autoPlay />
+            <Stack sx={{ position: 'absolute', left: 0, right: 0, margin: 'auto', bottom: '8px' }} justifyContent='center' alignItems='center' direction='row' spacing={2} >
+
+              <Button onClick={() => onVideo()} variant='contained'>{`${video ? 'stop' : 'start'}`}</Button>
+              <Button onClick={() => onAudio()} variant='contained'>{`${audio ? 'mute' : 'unmute'}`}</Button>
+            </Stack>
           </Stack>
         </Paper>
-        <Stack justifyContent='center' alignItems='center' direction='row' spacing={2} sx={{ padding: '8px' }}>
-
-          <Button onClick={() => onVideo()} variant='contained'>{`${video ? 'stop' : 'start'}`}</Button>
-          <Button onClick={() => onAudio()} variant='contained'>{`${audio ? 'mute' : 'unmute'}`}</Button>
-        </Stack>
       </Container>
     </ThemeProvider>
   )
