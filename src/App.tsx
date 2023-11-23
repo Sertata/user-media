@@ -5,10 +5,23 @@ const hasGetUserMedia = () => {
   return !!(navigator?.mediaDevices?.getUserMedia);
 }
 
+
+
 export const App: FC = () => {
   const ref = useRef<HTMLVideoElement | null>(null)
   const [audio, setAudio] = useState<MediaStreamTrack | null>(null)
 
+  const onMute = () => {
+    if (!audio) return;
+
+    audio.enabled = false
+  }
+  const onUnMute = () => {
+    if (!audio) return;
+
+    audio.enabled = true
+  }
+  console.log(audio?.enabled)
   useEffect(() => {
     if (hasGetUserMedia() && ref.current && ref.current instanceof HTMLVideoElement) {
 
@@ -23,12 +36,6 @@ export const App: FC = () => {
     }
   }, [])
 
-  const onEnabled = () => {
-    if (audio) {
-      audio.enabled = false
-    }
-  }
-
   return (
     <Container maxWidth='md'>
       <Stack justifyContent='center' alignItems='center'>
@@ -39,7 +46,10 @@ export const App: FC = () => {
           <video ref={ref} autoPlay />
         </Stack>
       </Paper>
-      <Button onClick={() => onEnabled()}>Click</Button>
+      <Stack justifyContent='center' alignItems='center'>
+        <Button onClick={() => onMute()} variant='outlined'>Mute</Button>
+        <Button onClick={() => onUnMute()} variant='outlined'>Unmute</Button>
+      </Stack>
     </Container>
   )
 }
