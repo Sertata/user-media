@@ -1,10 +1,11 @@
-import { Button, Container, Paper, Stack, Typography } from '@mui/material'
+import { FC, useRef, useEffect, useState } from 'react'
+import { Container, IconButton, Paper, Stack, SvgIcon, Typography } from '@mui/material'
 import {
   createTheme,
   responsiveFontSizes,
   ThemeProvider,
 } from '@mui/material/styles';
-import { FC, useRef, useEffect, useState } from 'react'
+import { MdVoiceOverOff, MdRecordVoiceOver, MdVideocam, MdVideocamOff } from "react-icons/md";
 
 const hasGetUserMedia = () => {
   return !!(navigator?.mediaDevices?.getUserMedia);
@@ -71,9 +72,16 @@ export const App: FC = () => {
           <Stack sx={{ position: 'relative' }}>
             <video ref={videoElRef} autoPlay />
             <Stack sx={{ position: 'absolute', left: 0, right: 0, margin: 'auto', bottom: '8px' }} justifyContent='center' alignItems='center' direction='row' spacing={2} >
-
-              <Button onClick={() => onVideo()} variant='contained'>{`${video ? 'stop' : 'start'}`}</Button>
-              <Button onClick={() => onAudio()} variant='contained'>{`${audio ? 'mute' : 'unmute'}`}</Button>
+              <IconButton onClick={() => onAudio()}>
+                {audio
+                  ? <SvgIcon color='success'><MdRecordVoiceOver /></SvgIcon>
+                  : <SvgIcon color='success'><MdVoiceOverOff /></SvgIcon>}
+              </IconButton>
+              <IconButton onClick={() => onVideo()}>
+                {video
+                  ? <SvgIcon color='success'><MdVideocam /></SvgIcon>
+                  : <SvgIcon color='success'><MdVideocamOff /></SvgIcon>}
+              </IconButton>
             </Stack>
           </Stack>
         </Paper>
