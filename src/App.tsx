@@ -15,7 +15,7 @@ theme = responsiveFontSizes(theme);
 export const App: FC = () => {
   const videoElRef = useRef<HTMLVideoElement | null>(null)
   const audioRef = useRef<MediaStreamTrack | null>(null)
-
+  const videoRef = useRef<MediaStreamTrack | null>(null)
   const onMute = () => {
     if (!audioRef.current) return;
 
@@ -26,12 +26,24 @@ export const App: FC = () => {
 
     audioRef.current.enabled = true
   }
+
+  const onStopVideo = () => {
+    if (!videoRef.current) return;
+
+    videoRef.current.enabled = false
+  }
+  const onStartVideo = () => {
+    if (!videoRef.current) return;
+
+    videoRef.current.enabled = true
+  }
   useEffect(() => {
     if (hasGetUserMedia() && videoElRef.current && videoElRef.current instanceof HTMLVideoElement) {
 
       navigator.mediaDevices.getUserMedia({ audio: true, video: true })
         .then(stream => {
           audioRef.current = stream.getAudioTracks()[0]
+          videoRef.current = stream.getVideoTracks()[0]
           videoElRef.current!.srcObject = stream
         })
         .catch(error => console.error(error))
@@ -53,6 +65,8 @@ export const App: FC = () => {
         <Stack justifyContent='center' alignItems='center' direction='row' spacing={2} sx={{ padding: '8px' }}>
           <Button onClick={() => onMute()} variant='contained'>Mute</Button>
           <Button onClick={() => onUnMute()} variant='contained'>Unmute</Button>
+          <Button onClick={() => onStopVideo()} variant='contained'>Stop video</Button>
+          <Button onClick={() => onStartVideo()} variant='contained'>Start video</Button>
         </Stack>
       </Container>
     </ThemeProvider>
