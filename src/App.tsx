@@ -4,7 +4,7 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from '@mui/material/styles';
-import { FC, useRef, useEffect } from 'react'
+import { FC, useRef, useEffect, useState } from 'react'
 
 const hasGetUserMedia = () => {
   return !!(navigator?.mediaDevices?.getUserMedia);
@@ -16,27 +16,37 @@ export const App: FC = () => {
   const videoElRef = useRef<HTMLVideoElement | null>(null)
   const audioRef = useRef<MediaStreamTrack | null>(null)
   const videoRef = useRef<MediaStreamTrack | null>(null)
-  const onMute = () => {
+
+  const [audio, setAudio] = useState(true);
+  const [video, setVideo] = useState(true);
+
+  const onAudio = () => {
     if (!audioRef.current) return;
 
-    audioRef.current.enabled = false
-  }
-  const onUnMute = () => {
-    if (!audioRef.current) return;
+    if (audio) {
+      audioRef.current.enabled = false
+      setAudio(false)
+      return
+    }
 
     audioRef.current.enabled = true
+    setAudio(true)
   }
 
-  const onStopVideo = () => {
+  const onVideo = () => {
     if (!videoRef.current) return;
 
-    videoRef.current.enabled = false
-  }
-  const onStartVideo = () => {
-    if (!videoRef.current) return;
+    if (video) {
+      videoRef.current.enabled = false
+      setVideo(false)
+      return
+    }
 
     videoRef.current.enabled = true
+    setVideo(true)
   }
+
+
   useEffect(() => {
     if (hasGetUserMedia() && videoElRef.current && videoElRef.current instanceof HTMLVideoElement) {
 
@@ -63,10 +73,9 @@ export const App: FC = () => {
           </Stack>
         </Paper>
         <Stack justifyContent='center' alignItems='center' direction='row' spacing={2} sx={{ padding: '8px' }}>
-          <Button onClick={() => onMute()} variant='contained'>Mute</Button>
-          <Button onClick={() => onUnMute()} variant='contained'>Unmute</Button>
-          <Button onClick={() => onStopVideo()} variant='contained'>Stop video</Button>
-          <Button onClick={() => onStartVideo()} variant='contained'>Start video</Button>
+
+          <Button onClick={() => onVideo()} variant='contained'>{`${video ? 'stop' : 'start'}`}</Button>
+          <Button onClick={() => onAudio()} variant='contained'>{`${audio ? 'mute' : 'unmute'}`}</Button>
         </Stack>
       </Container>
     </ThemeProvider>
