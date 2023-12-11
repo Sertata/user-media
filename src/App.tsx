@@ -5,7 +5,7 @@ import {
   responsiveFontSizes,
   ThemeProvider,
 } from '@mui/material/styles';
-import { MdVoiceOverOff, MdRecordVoiceOver, MdVideocam, MdVideocamOff } from "react-icons/md";
+import { MdVoiceOverOff, MdRecordVoiceOver, MdVideocam, MdVideocamOff, MdCamera } from "react-icons/md";
 
 const hasGetUserMedia = () => {
   return !!(navigator?.mediaDevices?.getUserMedia);
@@ -20,6 +20,28 @@ export const App: FC = () => {
 
   const [audio, setAudio] = useState(true);
   const [video, setVideo] = useState(true);
+  const [imageUrl, setImageUrl] = useState('')
+
+  const takePhoto = () => {
+    if (videoElRef.current) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      canvas.width = 700;
+      canvas.height = 400;
+
+      if (context && videoElRef) {
+        context.drawImage(videoElRef.current, 0, 0, 700, 400);
+
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.3);
+
+
+
+        setImageUrl(imageDataUrl);
+      }
+    }
+
+  };
 
   const onAudio = () => {
     if (!audioRef.current) return;
@@ -82,8 +104,10 @@ export const App: FC = () => {
                   ? <SvgIcon color='success'><MdVideocam /></SvgIcon>
                   : <SvgIcon color='success'><MdVideocamOff /></SvgIcon>}
               </IconButton>
+              <IconButton onClick={takePhoto}><SvgIcon><MdCamera /></SvgIcon></IconButton>
             </Stack>
           </Stack>
+          {imageUrl && <img src={imageUrl} />}
         </Paper>
       </Container>
     </ThemeProvider>
